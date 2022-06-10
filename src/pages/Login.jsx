@@ -5,10 +5,14 @@ import clientAxios from '../config/clientAxios';
 
 import Alert from '../components/Alert';
 
+import useAuth from '../hooks/useAuth';
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [alert, setAlert] = useState({});
+
+  const { setAuth } = useAuth();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -31,6 +35,7 @@ const Login = () => {
       .then((response) => {
         console.log(response);
         localStorage.setItem('token', response.data.token);
+        setAuth(response.data);
       })
       .catch((error) =>
         setAlert({ message: error.response.data.msg, error: true })
