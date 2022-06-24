@@ -10,6 +10,7 @@ const ProjectContextProvider = ({ children }) => {
   const [projects, setProjects] = useState([]);
   const [project, setProject] = useState({});
   const [loading, setLoading] = useState(false);
+  const [modalFormTask, setModalFormTask] = useState(false);
 
   const navigate = useNavigate();
 
@@ -107,12 +108,70 @@ const ProjectContextProvider = ({ children }) => {
     setLoading(false);
   };
 
+  const deleteProject = async (id) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      await clientAxios.delete(`/projects/${id}`, config);
+      const deleteProject = projects.filter((project) => project._id !== id);
+      setProjects(deleteProject);
+      navigate('/projects');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const toggleModal = () => {
+    setModalFormTask(!modalFormTask);
+  };
+
+  const submitTask = async (task) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const response = await clientAxios.post('/tasks', task, config);
+      const projectUpdate = { ...project };
+      projectUpdate.tasks = [...project.tasks, response.data];
+      setProject(projectUpdate);
+
+      setModalFormTask(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getProjects();
   }, []);
   return (
     <ProjectContext.Provider
-      value={{ projects, submitProject, showProject, project, loading }}
+      value={{
+        projects,
+        submitProject,
+        showProject,
+        project,
+        loading,
+        deleteProject,
+        modalFormTask,
+        toggleModal,
+        submitTask,
+      }}
     >
       {children}
     </ProjectContext.Provider>

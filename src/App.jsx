@@ -14,7 +14,7 @@ import NewProjects from './pages/NewProjects';
 import AuthContextProvider from './context/AuthContext';
 import ProjectContextProvider from './context/ProjectContext';
 import Project from './pages/Project';
-import EditPage from './pages/EditPage';
+import EditProject from './pages/EditProject';
 
 function App() {
   return (
@@ -41,7 +41,7 @@ function App() {
               <Route index element={<Projects />} />
               <Route path="create-project" element={<NewProjects />} />
               <Route path=":id" element={<Project />} />
-              <Route path="edit/:id" element={<EditPage />} />
+              <Route path="edit/:id" element={<EditProject />} />
             </Route>
             {/* FIN AREA PRIVADA */}
           </Routes>
