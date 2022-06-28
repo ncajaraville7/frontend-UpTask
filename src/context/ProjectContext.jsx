@@ -11,6 +11,7 @@ const ProjectContextProvider = ({ children }) => {
   const [project, setProject] = useState({});
   const [loading, setLoading] = useState(false);
   const [modalFormTask, setModalFormTask] = useState(false);
+  const [task, setTask] = useState({});
 
   const navigate = useNavigate();
 
@@ -131,9 +132,18 @@ const ProjectContextProvider = ({ children }) => {
 
   const toggleModal = () => {
     setModalFormTask(!modalFormTask);
+    setTask({});
   };
 
   const submitTask = async (task) => {
+    if (task?.idTask) {
+      await editTask(task);
+    } else {
+      await createTask(task);
+    }
+  };
+
+  const createTask = async (task) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) return;
@@ -156,6 +166,30 @@ const ProjectContextProvider = ({ children }) => {
     }
   };
 
+  const editTask = async (task) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      await clientAxios.put(`/tasks/${task.idTask}`, task, config);
+      setModalFormTask(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleModalEditTask = (task) => {
+    setTask(task);
+    setModalFormTask(true);
+  };
+
   useEffect(() => {
     getProjects();
   }, []);
@@ -171,6 +205,8 @@ const ProjectContextProvider = ({ children }) => {
         modalFormTask,
         toggleModal,
         submitTask,
+        handleModalEditTask,
+        task,
       }}
     >
       {children}

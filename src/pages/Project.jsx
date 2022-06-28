@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import useProjects from '../hooks/useProjects';
@@ -50,7 +50,7 @@ const Project = () => {
 
       <div className="bg-white mt-10 rounded-lg">
         {project.tasks?.length ? (
-          project.tasks?.map((task) => <Task key={task._id} {...task} />)
+          project.tasks?.map((task) => <Task key={task._id} task={task} />)
         ) : (
           <p className="text-center my-5 p-10">
             No hay tareas en este proyecto

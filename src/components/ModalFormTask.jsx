@@ -6,13 +6,14 @@ import Alert from './Alert';
 import { useParams } from 'react-router-dom';
 
 const MyModal = () => {
+  const [idTask, setIdTask] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [deliveryDate, setDeliveryDate] = useState('');
   const [priority, setPriority] = useState('');
   const [alert, setAlert] = useState({});
 
-  const { modalFormTask, toggleModal, submitTask } = useProjects();
+  const { modalFormTask, toggleModal, submitTask, task } = useProjects();
 
   const { id } = useParams();
 
@@ -26,13 +27,29 @@ const MyModal = () => {
       return;
     }
 
-    await submitTask({ name, description, deliveryDate, priority, id });
+    await submitTask({ name, description, deliveryDate, priority, idTask, id });
 
     setName('');
     setDescription('');
     setDeliveryDate('');
     setPriority('');
   };
+
+  useEffect(() => {
+    if (task?._id) {
+      setIdTask(task._id);
+      setName(task.name);
+      setDescription(task.description);
+      setDeliveryDate(task.deliveryDate.split('T')[0]);
+      setPriority(task.priority);
+      return;
+    }
+    setIdTask('');
+    setName('');
+    setDescription('');
+    setDeliveryDate('');
+    setPriority('');
+  }, [task]);
   return (
     <Transition.Root show={modalFormTask} as={Fragment}>
       <Dialog
@@ -99,7 +116,7 @@ const MyModal = () => {
                     as="h3"
                     className="text-lg leading-6 font-bold text-gray-900"
                   >
-                    Nueva Tarea
+                    {idTask ? 'Editar Tarea' : 'Nueva Tarea'}
                   </Dialog.Title>
 
                   <form className="my-10" onSubmit={handleSubmit}>
@@ -175,6 +192,7 @@ const MyModal = () => {
 
                     <input
                       type="submit"
+                      value={idTask ? 'Editar Tarea' : 'Crear Tarea'}
                       className="bg-sky-600 hover:bg-sky-700 w-full p-3 text-white uppercase font-bold cursor-pointer transition-colors rounded text-sm"
                     />
                   </form>
